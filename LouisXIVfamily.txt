@@ -1,6 +1,6 @@
 # This file is an example to show how to format a family.
 
-# Two lines represent an union:
+# Two lines represent a union:
 Louis XIV (M, birthday=1638-09-05, deathday=1715-09-01)
 Marie-Thérèse d'Autriche (F)
 # Indented lines after the union represent children
