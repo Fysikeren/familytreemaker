@@ -8,7 +8,6 @@ by line, children just have to follow parents in the file. Persons can be
 repeated as long as they keep the same name or id. An example is given in the
 file `LouisXIVfamily.txt`.
 
-
 Installation
 ------------
 
@@ -24,9 +23,11 @@ Usage
 
 The sample family descriptor `LouisXIVfamily.txt` is here to show you the
 usage. Simply run:
+
+```bash
+./familytreemaker.py -a 'Louis XIV' LouisXIVfamily.txt | dot -Tpng -o LouisXIVfamily.png
 ```
-$ ./familytreemaker.py -a 'Louis XIV' LouisXIVfamily.txt | dot -Tpng -o LouisXIVfamily.png
-```
+
 It will generate the tree from the infos in `LouisXIVfamily.txt`, starting from
 *Louis XIV* and saving the image in `LouisXIVfamily.png`.
 
