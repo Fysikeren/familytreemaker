@@ -75,19 +75,18 @@ class Person:
     return self.name
 
   def dump(self):
-    return	'Person: %s (%s)\n' % (self.name, str(self.attr)) + \
-        '  %d households' % len(self.households)
+    return	f'Person: {self.name} ({self.attr})\n  {len(self.households)} households'
 
   def graphviz(self):
     label = self.name
     if 'surname' in self.attr:
-      label += '\\n« ' + str(self.attr['surname']) + '»'
+      label += '\\n' + str(self.attr['surname'])
     if 'birthday' in self.attr:
-      label += '\\n' + str(self.attr['birthday'])
+      label += '\\nb. ' + str(self.attr['birthday'])
       if 'deathday' in self.attr:
-        label += ' † ' + str(self.attr['deathday'])
+        label += '\\nd. ' + str(self.attr['deathday'])
     elif 'deathday' in self.attr:
-      label += '\\n† ' + str(self.attr['deathday'])
+      label += '\\nd. ' + str(self.attr['deathday'])
     if 'notes' in self.attr:
       label += '\\n' + str(self.attr['notes'])
     opts = ['label="' + label + '"']
@@ -150,7 +149,9 @@ class Family:
     Adds a union (household) to self.households and updates the family members' infos about this union.
     """
     if len(h.parents) != 2:
-      print('error: number of parents != 2')
+      print(h)
+      print('Error: Number of parents != 2')
+      # raise Exception('Error: Number of parents != 2')
       return
 
     h.id = len(self.households)
@@ -260,9 +261,7 @@ class Family:
         prev = p.id
         continue
       elif len(p.households) > 2:
-        raise Exception('Person "' + p.name + '" has more than 2 ' +
-                'spouses/husbands: drawing this is not ' +
-                'implemented')
+        raise Exception('Person "' + p.name + '" has more than 2 spouses. Drawing this is not implemented')
 
       # Display those on the left (if any)
       for i in range(0, int(l/2)):
@@ -338,13 +337,9 @@ def main():
   Entry point of the program when called as a script.
   """
   # Parse command line options
-  parser = argparse.ArgumentParser(description=
-       'Generates a family tree graph from a simple text file')
-  parser.add_argument('-a', dest='ancestor',
-            help='make the family tree from an ancestor (if '+
-            'omitted, the program will try to find an ancestor)')
-  parser.add_argument('input', metavar='INPUTFILE',
-            help='the formatted text file representing the family')
+  parser = argparse.ArgumentParser(description='Generates a family tree graph from a simple text file')
+  parser.add_argument('-a', dest='ancestor', help='make the family tree from an ancestor (if omitted, the program will try to find an ancestor)')
+  parser.add_argument('input', metavar='INPUTFILE', help='the formatted text file representing the family')
   args = parser.parse_args()
 
   # Create the family
