@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2013 Adrien Vergé
 
-"""familytreemaker
+"""
+familytreemaker. This program creates family tree graphs from simple text files.
 
-This program creates family tree graphs from simple text files.
-
-The input file format is very simple, you describe persons of your family line
-by line, children just have to follow parents in the file. Persons can be
+The input file format is very simple, you describe people of your family line
+by line. Children just have to follow parents in the file. People can be
 repeated as long as they keep the same name or id. An example is given in the
 file LouisXIVfamily.txt.
 
@@ -15,13 +14,11 @@ This script outputs a graph descriptor in DOT format. To make the image
 containing the graph, you will need a graph drawer such as GraphViz.
 
 For instance:
-
 $ ./familytreemaker.py -a 'Louis XIV' LouisXIVfamily.txt | \
   dot -Tpng -o LouisXIVfamily.png
 
 will generate the tree from the infos in LouisXIVfamily.txt, starting from
-Louis XIV and saving the image in LouisXIVfamily.png.
-
+Louis XIV, and save the image as LouisXIVfamily.png.
 """
 
 __author__ = "Adrien Vergé"
@@ -35,16 +32,15 @@ import re
 import sys
 
 class Person:
-  """This class represents a person.
+  """
+  This class represents a person.
 
   Characteristics:
-  - name			real name of the person
-  - id			unique ID to be distinguished in a dictionnary
-  - attr			attributes (e.g. gender, birth date...)
+  - name			  real name of the person
+  - id			    unique ID to be distinguished in a dictionary
+  - attr			  attributes (e.g. gender, birth date, …)
   - households	list of households this person belongs to
-  - follow_kids	boolean to tell the algorithm to display this person's
-          descendent or not
-
+  - follow_kids	boolean telling the algorithm whether to display this person's descendants
   """
 
   def __init__(self, desc):
@@ -101,11 +97,10 @@ class Person:
     return self.id + '[' + ','.join(opts) + ']'
 
 class Household:
-  """This class represents a household, i.e. a union of two person.
+  """
+  This class represents a household, i.e. a union of two people.
 
-  Those two persons are listed in 'parents'. If they have children, they are
-  listed in 'kids'.
-
+  Those two people are listed in 'parents'. If they have children, they are listed in 'kids'.
   """
 
   def __init__(self):
@@ -124,11 +119,11 @@ class Household:
     return False
 
 class Family:
-  """Represents the whole family.
+  """
+  Represents the whole family.
 
-  'everybody' contains all persons, indexed by their unique id
-  'households' is the list of all unions (with or without children)
-
+  'everybody' contains all people, indexed by their unique id.
+  'households' is the list of all unions (with or without children).
   """
 
   everybody = {}
@@ -137,9 +132,8 @@ class Family:
   invisible = '[shape=circle,label="",height=0.01,width=0.01]';
 
   def add_person(self, string):
-    """Adds a person to self.everybody, or update his/her info if this
-    person already exists.
-
+    """
+    Adds a person to self.everybody, or updates their info if they already exist.
     """
     p = Person(string)
     key = p.id
@@ -152,9 +146,8 @@ class Family:
     return self.everybody[key]
 
   def add_household(self, h):
-    """Adds a union (household) to self.households, and updates the
-    family members infos about this union.
-
+    """
+    Adds a union (household) to self.households and updates the family members' infos about this union.
     """
     if len(h.parents) != 2:
       print('error: number of parents != 2')
@@ -168,8 +161,8 @@ class Family:
         p.households.append(h)
 
   def find_person(self, name):
-    """Tries to find a person matching the 'name' argument.
-
+    """
+    Tries to find a person matching the 'name' argument.
     """
     # First, search in ids
     if name in self.everybody:
@@ -181,8 +174,8 @@ class Family:
     return None
     
   def populate(self, f):
-    """Reads the input file line by line, to find persons and unions.
-
+    """
+    Reads the input file line by line to find people and unions.
     """
     h = Household()
     while True:
@@ -208,24 +201,24 @@ class Family:
           h.parents.append(p)
 
   def find_first_ancestor(self):
-    """Returns the first ancestor found.
+    """
+    Returns the first ancestor found.
 
-    A person is considered an ancestor if he/she has no parents.
+    A person is considered an ancestor if they have no parents.
 
-    This function is not very good, because we can have many persons with
-    no parents, it will always return the first found. A better practice
-    would be to return the one with the highest number of descendant.
-    
+    This function is not very good, because we can have many people with
+    no parents. It will always return the first found. A better practice
+    would be to return the one with the highest number of descendants.
     """
     for p in self.everybody.values():
       if len(p.parents) == 0:
         return p
 
   def next_generation(self, gen):
-    """Takes the generation N in argument, returns the generation N+1.
+    """
+    Takes generation N in argument, returns generation N + 1.
 
-    Generations are represented as a list of persons.
-
+    Generations are represented as lists of people.
     """
     next_gen = []
 
@@ -239,17 +232,17 @@ class Family:
     return next_gen
 
   def get_spouse(household, person):
-    """Returns the spouse or husband of a person in a union.
-
+    """
+    Returns the spouse or husband of a person in a union.
     """
     return	household.parents[0] == person \
         and household.parents[1] or household.parents[0]
 
   def display_generation(self, gen):
-    """Outputs an entire generation in DOT format.
-
     """
-    # Display persons
+    Outputs an entire generation in DOT format.
+    """
+    # Display people
     print('\t{ rank=same;')
 
     prev = None
@@ -320,9 +313,8 @@ class Family:
               i += 1
 
   def output_descending_tree(self, ancestor):
-    """Outputs the whole descending family tree from a given ancestor,
-    in DOT format.
-
+    """
+    Outputs the whole descending family tree from a given ancestor in DOT format.
     """
     # Find the first households
     gen = [ancestor]
@@ -342,8 +334,8 @@ class Family:
     print('}')
 
 def main():
-  """Entry point of the program when called as a script.
-
+  """
+  Entry point of the program when called as a script.
   """
   # Parse command line options
   parser = argparse.ArgumentParser(description=
