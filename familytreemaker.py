@@ -252,30 +252,29 @@ class Family:
 
       if prev:
         if l <= 1:
-          print('\t\t%s -> %s [style=invis];' % (prev, p.id))
+          print(f'\t\t{prev} -> {p.id} [style=invis];')
         else:
-          print('\t\t%s -> %s [style=invis];'
-              % (prev, Family.get_spouse(p.households[0], p).id))
+          print(f'\t\t{prev} -> {Family.get_spouse(p.households[0], p).id} [style=invis];')
 
       if l == 0:
         prev = p.id
         continue
       elif len(p.households) > 2:
-        raise Exception('Person "' + p.name + '" has more than 2 spouses. Drawing this is not implemented')
+        raise Exception(f'Person "{p.name}" has more than 2 spouses. Drawing this is not implemented')
 
       # Display those on the left (if any)
       for i in range(0, int(l/2)):
         h = p.households[i]
         spouse = Family.get_spouse(h, p)
-        print('\t\t%s -> h%d -> %s;' % (spouse.id, h.id, p.id))
-        print('\t\th%d%s;' % (h.id, Family.invisible))
+        print(f'\t\t{spouse.id} -> h{h.id} -> {p.id};')
+        print(f'\t\th{h.id}{Family.invisible};')
 
       # Display those on the right (at least one)
       for i in range(int(l/2), l):
         h = p.households[i]
         spouse = Family.get_spouse(h, p)
-        print('\t\t%s -> h%d -> %s;' % (p.id, h.id, spouse.id))
-        print('\t\th%d%s;' % (h.id, Family.invisible))
+        print(f'\t\t{p.id} -> h{h.id} -> {spouse.id};')
+        print(f'\t\th{h.id}{Family.invisible};')
         prev = spouse.id
     print('\t}')
 
@@ -287,26 +286,24 @@ class Family:
         if len(h.kids) == 0:
           continue
         if prev:
-          print('\t\t%s -> h%d_0 [style=invis];' % (prev, h.id))
+          print(f'\t\t{prev} -> h{h.id}_0 [style=invis];')
         l = len(h.kids)
         if l % 2 == 0:
           # We need to add a node to keep symmetry
           l += 1
-        print('\t\t' + ' -> '.join(map(lambda x: 'h%d_%d' % (h.id, x), range(l))) + ';')
+        print('\t\t' + ' -> '.join(map(lambda x: f'h{h.id}_{x}', range(l))) + ';')
         for i in range(l):
-          print('\t\th%d_%d%s;' % (h.id, i, Family.invisible))
-          prev = 'h%d_%d' % (h.id, i)
+          print(f'\t\th{h.id}_{i}{Family.invisible};')
+          prev = f'h{h.id}_{i}'
     print('\t}')
 
     for p in gen:
       for h in p.households:
         if len(h.kids) > 0:
-          print('\t\th%d -> h%d_%d;'
-                % (h.id, h.id, int(len(h.kids)/2)))
+          print(f'\t\th{h.id} -> h{h.id}_{int(len(h.kids)/2)};')
           i = 0
           for c in h.kids:
-            print('\t\th%d_%d -> %s;'
-                  % (h.id, i, c.id))
+            print(f'\t\th{h.id}_{i} -> {c.id};')
             i += 1
             if i == len(h.kids)/2:
               i += 1
@@ -323,7 +320,7 @@ class Family:
           '\tedge [dir=none];\n')
 
     for p in self.everybody.values():
-      print('\t' + p.graphviz() + ';')
+      print(f'\t{p.graphviz()};')
     print('')
 
     while gen:
@@ -354,7 +351,7 @@ def main():
   if args.ancestor:
     ancestor = family.find_person(args.ancestor)
     if not ancestor:
-      raise Exception('Cannot find person "' + args.ancestor + '"')
+      raise Exception(f'Cannot find person "{args.ancestor}"')
   else:
     ancestor = family.find_first_ancestor()
 
